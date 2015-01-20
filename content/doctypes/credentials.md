@@ -81,3 +81,4 @@ Signed by the keys contained in `<masterPublic>`.
 * The outer `keyCredential`'s `nymIDSource` can be removed, as it also appears nested in `masterSigned`.
   => Remove one layer. Remove the outer `keyCredential`
 * Remove `masterPublic`, replace it by providing the `masterID` only. This is sufficient to prove that the master signed the keyCredential (as it is still inside `masterSigned`, with the master's signature).
+* TODO (for Otto to fill out): Why could we remove the `masterCredential` document, as discussed in the hangout?
