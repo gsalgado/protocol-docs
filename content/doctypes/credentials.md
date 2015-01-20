@@ -6,15 +6,16 @@ See also [this colored representation](https://drive.google.com/a/monetas.net/fi
 Background information (the why) concerning `credentials`:
 
 * Each `credential` has a `nymIDSource` and three key's (`A`, `E`, `S`).
-  * The `nymID` (Identifier) is based on the hash of the `nymIDSource`.
+  * The `nymID` (Identifier) is based on the hash of the `nymIDSource`. A nym consists of all credentials (master and key credentials). 
+  * The `nymIDSource` is the "root" of the trust-chain. It can be anything that can authenticate the `masterCredential`.
+    * The same `nymIDSource` is shared between the `masterCredential` as well as any `keyCredential`. This is how you know they are part of the same nym (`nymID`).
+    * Currently, only self-signing is supported (`nymIDSource` = public key). In the future, Bitcoin addresses, Namecoin addresses, X.509 etc. could be integrated.
+  * The `nymIDSource` is used to authenticate  the `masterCredential`, including the A/E/S keys. The `S`-key is used for any further signing action.
   * The credential `ID` is based on the hash of the whole armored `<credential>` contents,
-    which is signed by the source (`nymIDSource`). (TODO: is the hash based on the signed or non-signed data?).
-  * Either `A` (authentication), `E` (encryption) or `S` (signature).
+    which is signed by the credential's `S`-key. (TODO: is the hash based on the signed or non-signed data?).
+  * Key types: either `A` (authentication), `E` (encryption) or `S` (signature).
     * Only `S` seems to be in use (TODO: investigate).
     * RSA keys at the moment, but see [NEW MEP TODO](TODO).
-  * The `nymIDSource` can be anything that can authenticate the credential.
-    * Currently, only self-signing is supported. In the future, Bitcoin addresses, Namecoin addresses, X.509 etc. could be integrated.
-  * The `nymIDSource` is used to authenticate  the `credential`, including the A/E/S keys. The `S`-key is used for any further signing action.
 * The `masterCredential` is self-signed, the whole `masterCredential` document along with its signature is enclosed in the `credential` document.
   * (look for the `BEGIN MASTER KEY CREDENTIAL SIGNATURE` section).
   * The `masterCredential`'s `S`-key is used to sign the `keyCredential` (see `masterSigned`).
@@ -22,7 +23,7 @@ Background information (the why) concerning `credentials`:
 * The outer `keyCredential` is, like the `masterCredential`, a self-signed document. It contains `masterSigned`.
   * `masterSigned` contains the "real", **inner** `keyCredential` document and a signature thereof, made by the `masterCredential`'s `S`-key.
   * General concept: Master source (`nymIDSource`) authenticates the `masterCredential`'s A/E/S keys. That `S`-key in turn signs the `keyCredential`. In practice, it signs the whole inner `keyCredential` document (which contains everything, both a `nymIDSource` and A/E/S keys). In theory, only the `nymIDSource` needs to be signed, because the `keyCredential`'s `nymIDSource` authenticates the `keyCredential`'s A/E/S keys.
-  * `nymIDSource`: Same as in `masterCredential`.
+  * `nymIDSource`: Copy of the `masterCredential`'s `nymIDSource`.
   * The **inner** `keyCredential` is just like any other credential, coming with `nymIDSource` and A/E/S keys.
     In addition, it contains the full self-signed `masterCredential` document (a 1:1 copy of the signed `masterCredential` document, enclosed in `masterPublic`).
     Why? The reason is that the `keyCredential` should contain the information of the master that signed it, and the master's signature to prove it has been signed.
