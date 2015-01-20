@@ -21,7 +21,7 @@ Background information (the why) concerning `credentials`:
 * There is an "outer" `keyCredential` document, as well as another `keyCredential` document nested inside. [Confusing naming is confusing.](#possibleimprovements)
 * The outer `keyCredential` is, like the `masterCredential`, a self-signed document. It contains `masterSigned`.
   * `masterSigned` contains the "real", **inner** `keyCredential` document and a signature thereof, made by the `masterCredential`'s `S`-key.
-  * General concept: Master source (`nymIDSource`) signs the `masterCredential`'s A/E/S keys. That `S`-key in turn signs the `keyCredential`. In practice, it signs the whole inner `keyCredential` document (which contains everything, both a `nymIDSource` and A/E/S keys). In theory, only the `nymIDSource` needs to be signed, because the `keyCredential`'s `nymIDSource` (self-)signs the `keyCredential`'s A/E/S keys.
+  * General concept: Master source (`nymIDSource`) authenticates the `masterCredential`'s A/E/S keys. That `S`-key in turn signs the `keyCredential`. In practice, it signs the whole inner `keyCredential` document (which contains everything, both a `nymIDSource` and A/E/S keys). In theory, only the `nymIDSource` needs to be signed, because the `keyCredential`'s `nymIDSource` authenticates the `keyCredential`'s A/E/S keys.
   * `nymIDSource`: Same as in `masterCredential`.
   * The **inner** `keyCredential` is just like any other credential, coming with `nymIDSource` and A/E/S keys.
     In addition, it contains the full self-signed `masterCredential` document (a 1:1 copy of the signed `masterCredential` document, enclosed in `masterPublic`).
